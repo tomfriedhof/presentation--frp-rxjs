@@ -8,7 +8,7 @@
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/blood.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/monokai.css">
@@ -25,8 +25,320 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h2>Reactive Functional Programming and RxJS</h2>
+					<p>Presented by: <a href="http://twitter.com/tomfriedhof">@tomfriedhof</a>
+					</p>
+				</section>
+
+				<section>
+					<h1 style="text-align: left ">Tom Friedhof</h1>
+					<div style="width: 25%; float: left;">
+						<img src="img/me.jpg" class="no-border" />
+					</div>
+					<div style="width: 75%; float: left;">
+						<ul style="list-style: none">
+							<li>Solutions Architect at <a href="http://activelamp.com">ActiveLAMP</a></li>
+							<li><a href="http://twitter.com/tomfriedhof">@tomfriedhof</a></li>
+							<li><a href="http://twitter.com/activelamp">@activelamp</a></li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<section>
+						<h2>What I'm going to cover:</h2>
+						<ul>
+							<li class="fragment">What is functional programming?</li>
+							<li class="fragment">Design patterns surrounding composability</li>
+							<li class="fragment">Declarative vs Imperative</li>
+							<li class="fragment">Reactive UI's using RxJS</li>
+						</ul>
+					</section>
+					<section>
+						<h2>What I'm not going to cover:</h2>
+						<ul>
+							<li class="fragment">Flux Architecture</li>
+							<li class="fragment">Redux / NGRX State Management</li>
+							<li class="fragment">Front-end frameworks like React or Angular</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Dipping our toe into Reactivity with Rx!</h2>
+						<aside class="notes">
+							<p>Should walk away with:</p>
+							<ul>
+								<li>functional principles</li>
+								<li>how functional principles apply to state management in the UI</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+				<section>
+					<h2>TypeScript / es6</h2>
+					<p class="fragment">Optional static type-checking along with the latest ECMAScript features.</p>
+
+					<ul>
+						<li class="fragment">Interfaces</li>
+						<li class="fragment">Inheritance</li>
+						<li class="fragment">Encapsulation</li>
+						<li class="fragment">Strictly Typed</li>
+					</ul>
+
+					<aside class="notes">
+						<p>I won't be digging into the details of OOP</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Functional Programming</h2>
+					<p class="fragment">is a paradigm of building software using <span class="fragment highlight-red">composable functions</span></p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Composability</h2>
+						<p class="fragment fade-down">Ubiquitous Design Pattern</p>
+					</section>
+					<section data-transition="zoom">
+						<h2>"Composition over inheritance"</h2>
+						<p class="fragment fade-up">This is an OOP principle</p>
+					</section>
+
+					<section data-transition="slide">
+						<h2>Examples of composition on OOP</h2>
+						<ul>
+							<li class="fragment">Polymorphism</li>
+							<li class="fragment">Dependency Injection</li>
+							<li class="fragment">Liskov substitution principle</li>
+						</ul>
+
+						<aside class="notes">
+							<dl>
+								<dt>Liskov</dt>
+								<dd>if S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program.</dd>
+							</dl>
+						</aside>
+					</section>
+
+					<section data-transition="zoom">
+						<h2>Unix Pipes</h2>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+$ ps aux | grep www-data
+						</code></pre>
+					</section>
+
+					<section data-transition="slide">
+						<h2>Micro-services</h2>
+						<span>docker-compose.yml</span>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+php:
+    image: php:7.4.1
+
+nginx:
+    image: nginx:1.15.3-alpine
+
+database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: lamp
+      MYSQL_PASSWORD: lamp
+      MYSQL_DATABASE: lamp
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h2>Functional Programming</h2>
+						<p>is a paradigm of building software using <span style="color: #ff2c2d">composable functions</span></p>
+						<h3 class="fragment">Pure Functions</h3>
+					</section>
+
+					<section>
+						<h2>Pure Functions</h2>
+						<ul>
+							<li class="fragment">Given the same input, always return the same output</li>
+							<li class="fragment">No side-effects</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Pure Function</h3>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+function add(a, b) {
+	return a + b;
+}
+						</code></pre>
+						<div class="fragment">
+						<h3>Impure Function</h3>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+const c = 3;
+function impureAdd(a, b) {
+	return a + b + c;
+}
+						</code></pre>
+						</div>
+					</section>
+					<section>
+						<p>Impure Functions interact with the outside world, pure functions do not.</p>
+					</section>
+					<section>
+						<h2>Demo 1 + 2</h2>
+					</section>
+					<section>
+						<h2>Bonus: Currying</h2>
+						<p class="fade-up fragment">Currying is when you break down a function that takes multiple arguments into a series of functions that each take only one argument.</p>
+					</section>
+					<section>
+						<h3>Adding to the previous value</h3>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+let val = calc.addPure(1, 1);
+val = calc.addPure(5, val);
+val = calc.addPure(7, val);
+						</code></pre>
+						<div class="fragment">
+							<p>Pipe previous value to next operation (Composing)</p>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+1 | calc.addPure(1) | calc.addPure(5) | calc.addPure(7)
+						</code></pre>
+						</div>
+					</section>
+					<section>
+						<h2>Demo 3 + 4 + 5</h2>
+					</section>
+					<section>
+						<p>Function composition is the process of combining two or more functions in order to produce a new function or perform some computation.</p>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+const result = R.compose(R.divide(150), R.multiply(5), add(10));
+let val = result(5);
+						</code></pre>
+					</section>
+					<section>
+						Functional programming is <span class="fragment highlight-red">declarative</span>, not imperative
+						<p class="fragment">Declarative - Spreadsheet formulas</p>
+						<p class="fragment">Imperative - jQuery</p>
+					</section>
+					<section>
+						<h2>Functional Programming (Review)</h2>
+						<ul>
+							<li class="fragment">Pure functions</li>
+							<li class="fragment">No outside (shared) state</li>
+							<li class="fragment">No side effects</li>
+							<li class="fragment">Declarative, not imperative</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Light Switch <br />+ <br />Light Bulb</h2>
+					</section>
+					<section>
+						<h2>Imperative</h2>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+// Psuedo jquery example
+$('#switch').click(() => {
+	$('#bulb').toggle();
+});
+						</code></pre>
+					</section>
+					<section>
+						<h2>Declarative</h2>
+
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+// @file light-switch.js
+let switchPower = localStorage.getItem('switchPower') || false;
+$('#switch').click(() => {
+  localStorage.setItem('switchPower', !switchPower);
+});
+						</code></pre>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+// @file bulb.js
+let switchPower = localStorage.getItem('switchPower') || false;
+$('#bulb').addClass(switchPower ? 'bulb-on' : 'bulb-off');
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Pass the UI State into the UI</h2>
+					<p class="fragment">UI decides how to render based on parameter passed in (state).</p>
+				</section>
+
+				<section>
+					<section>
+						<h3>How can one make the UI react to application state change?</h3>
+					</section>
+
+					<section>
+						<h2>Observables</h2>
+					</section>
+
+					<section>
+						<h2>Observables</h2>
+						<p>In ReactiveX an observer subscribes to an Observable. Then that observer reacts to whatever item or sequence of items the Observable emits.</p>
+						<a href="http://reactivex.io/documentation/observable.html">http://reactivex.io/documentation/observable.html</a>
+					</section>
+
+					<section>
+						<h1 style="text-transform: none">RxJS</h1>
+					</section>
+
+					<section>
+						<h2>Demo 6 + 7</h2>
+					</section>
+
+					<section>
+						<p>RxJS is mainly about the operators!</p>
+					</section>
+					<section>
+						<h2>Demo 8 + 9</h2>
+						<pre style="margin: 60px auto"><code data-trim contenteditable style="padding: 20px 15px;">
+const result$ = combineLatest(seconds$.pipe(
+    map((x: number) => x * 5)
+), clickEvents$);
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Review</h2>
+					<ul>
+						<li class="fragment">RxJS enables the ability to easily react to state change via subscriptions</li>
+						<li class="fragment">UI Controller is in complete control of its own view… components are Declarative and react to something, not commanded to do something.</li>
+						<li class="fragment">State is just a parameter to a view render</li>
+						<li class="fragment">Decouple components on a page by using a state system and have all the components react to state change</li>
+					</ul>
+				</section>
+				
+				<section>
+					<section>
+						<h3>Next Steps (Flux pattern)</h3>
+						<img src="img/flux.png" alt="">
+					</section>
+					<section>
+						<h2>Flux Pattern</h2>
+						<ul>
+							<li class="fragment">Angular - NGRX Store</li>
+							<li class="fragment">React - Redux</li>
+						</ul>
+					</section>
+				</section>
+
+				<section style="text-align: left;"  data-background-video="img/Website-Loop.mov" data-background-video-loop>
+					<div style="width: 60%; float: left; color: #111">
+						<h3 style="color: #111">Questions?</h3>
+						<p>Send me an email:</p>
+						<em>tom@activelamp.com</em>
+						<br /><br />
+						<em>or Tweet <a href="https://twitter.com/tomfriedhof">@tomfriedhof</a></em>
+					</div>
+					<div style="width: 40%; float: left">
+						<img src="img/activelamp_square_logo.png" style="border: none; box-shadow: none" />
+					</div>
+				</section>
 			</div>
 		</div>
 
